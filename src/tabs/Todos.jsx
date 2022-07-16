@@ -5,6 +5,8 @@ import { Grid, GridItem, SearchForm, EditForm, Text, Todo } from 'components';
 export class Todos extends Component {
   state = {
     todos: [],
+    isEditing: false,
+    currentTodo: {},
   };
 
   componentDidMount() {
@@ -38,11 +40,60 @@ export class Todos extends Component {
     }));
   };
 
-  render() {
+  editTodo = todo => {
+    this.setState({ isEditing: true, currentTodo: { ...todo } });
+  };
+
+  canselEditTodo = () => {
+    this.setState({ isEditing: false });
+  };
+
+  handleInputEditChange = event => {
+    const { currentTodo } = this.state;
+    this.setState({
+      currentTodo: { ...currentTodo, text: event.target.value },
+    });
+  };
+
+  handleUpdateTodo = (id, updatedTodo) => {
     const { todos } = this.state;
+
+    const updatedItem = todos.map(todo => {
+      return todo.id === id ? updatedTodo : todo;
+    });
+
+    this.setState({
+      isEditing: false,
+      todos: updatedItem,
+    });
+  };
+
+  handleEditFormUpdate = e => {
+    e.preventDefault();
+
+    const { currentTodo } = this.state;
+
+    if (currentTodo.text.trim() === '') {
+      return alert('Enter some text!');
+    }
+
+    this.handleUpdateTodo(currentTodo.id, currentTodo);
+  };
+
+  render() {
+    const { todos, isEditing, currentTodo } = this.state;
     return (
       <>
-        <SearchForm onSubmit={this.handleSubmit} />
+        {isEditing ? (
+          <EditForm
+            onCansel={this.canselEditTodo}
+            currentTodo={currentTodo}
+            onChange={this.handleInputEditChange}
+            onEdit={this.handleEditFormUpdate}
+          />
+        ) : (
+          <SearchForm onSubmit={this.handleSubmit} />
+        )}
         <Grid>
           {todos.map(({ id, text }, index) => (
             <GridItem key={id}>
@@ -50,6 +101,7 @@ export class Todos extends Component {
                 text={text}
                 elementIndex={index + 1}
                 handleDelete={() => this.deleteTodo(id)}
+                handleEdit={() => this.editTodo({ id, text })}
               />
             </GridItem>
           ))}

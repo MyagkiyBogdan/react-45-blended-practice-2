@@ -4,6 +4,25 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { SearchFormStyled, FormBtn, InputSearch } from 'components';
 import { BtnEdit } from './EditForm.styled';
 
-export const EditForm = () => {
-  return <h2>Edit Form</h2>;
+export const EditForm = ({ onCansel, currentTodo, onChange, onEdit }) => {
+  return (
+    <SearchFormStyled onSubmit={onEdit}>
+      <BtnEdit type="button" onClick={onCansel}>
+        <MdOutlineCancel size="16px" color="red" />
+      </BtnEdit>
+
+      <FormBtn type="submit">
+        <RiSaveLine size="16px" color="green" />
+      </FormBtn>
+
+      <InputSearch
+        placeholder="EDIT TODO"
+        name="edit"
+        required
+        defaultValue={currentTodo.text}
+        autoFocus
+        onChange={onChange}
+      />
+    </SearchFormStyled>
+  );
 };

@@ -12,6 +12,7 @@ export class SearchForm extends Component {
     e.preventDefault();
 
     this.props.onSubmit(this.state.query);
+    this.setState({ query: '' });
   };
 
   handleInputChange = e => {
